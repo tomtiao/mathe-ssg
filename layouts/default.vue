@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <Nuxt />
+    <Nuxt keep-alive />
     <div class="footer">
       扶朕起来朕还能学 ©2016-2019
       <br>Designed by
@@ -12,8 +12,24 @@
 </template>
 
 <script>
+import store from '@/store.js'
 export default {
-  name: 'DefaultLayout'
+  name: 'DefaultLayout',
+  async fetch () {
+    let trees = []
+    let updateTime = 0
+    try {
+      const resp = await store._fetchTrees()
+      trees = resp.trees
+      updateTime = resp.update
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.warn(`error when fetching data: ${err}`)
+    } finally {
+      this.$store.state.trees = trees
+      this.$store.state.update = updateTime
+    }
+  }
 }
 </script>
 

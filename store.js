@@ -25,6 +25,7 @@ export default {
     trees: ft.then(data => data.trees),
     update: ft.then(data => data.update)
   },
+  _fetchTrees: fetchTrees,
   getSegs (tk, tid) {
     return this.data.trees.then((trees) => {
       if (trees.length === 0) {

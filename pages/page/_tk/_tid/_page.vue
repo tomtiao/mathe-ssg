@@ -42,24 +42,32 @@
       <mu-flex direction="column" justify-content="center" align-items="center">
         <mu-pagination :page-size="5" :total="total" :current.sync="current" @change="onChangePage" />
         <mu-flex direction="row" justify-content="center">
-          <mu-button
-            class="seg-jump"
-            flat
-            :disabled="!preNext[0]"
+          <NuxtLink
+            v-if="preNext[0]"
             :to="preNext[0] ? `/page/${$route.params.tk}/${preNext[0].id}/1` : null"
           >
-            <mu-icon left value="keyboard_arrow_left" />
-            {{ preNext[0] ? preNext[0].text : '没有上一节了' }}
-          </mu-button>
-          <mu-button
-            class="seg-jump"
-            flat
-            :disabled="!preNext[1]"
+            <mu-button
+              class="seg-jump"
+              flat
+              :disabled="!preNext[0]"
+            >
+              <mu-icon left value="keyboard_arrow_left" />
+              {{ preNext[0].text }}
+            </mu-button>
+          </NuxtLink>
+          <NuxtLink
+            v-if="preNext[1]"
             :to="preNext[1] ? `/page/${$route.params.tk}/${preNext[1].id}/1` : null"
           >
-            {{ preNext[1] ? preNext[1].text : '没有下一节了' }}
-            <mu-icon right value="keyboard_arrow_right" />
-          </mu-button>
+            <mu-button
+              class="seg-jump"
+              flat
+              :disabled="!preNext[1]"
+            >
+              {{ preNext[1].text }}
+              <mu-icon right value="keyboard_arrow_right" />
+            </mu-button>
+          </NuxtLink>
         </mu-flex>
       </mu-flex>
     </div>
@@ -95,7 +103,8 @@ export default {
     }
   },
   watch: {
-    '$route.params' () {
+    '$route.params' (newVal) {
+      if (!Reflect.has(newVal, 'tk')) { return }
       this.fetchData()
     }
   },

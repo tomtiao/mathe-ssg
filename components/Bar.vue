@@ -14,14 +14,17 @@
         <slot>
           <LinkItem to="/" icon="home" title="主页" value="/" />
           <mu-divider />
-          <LinkItem
+          <NuxtLink
             v-for="lesson in trees"
             :key="lesson.name"
             :to="'/lesson/' + lesson.name"
-            icon="book"
-            :title="lesson.name"
-            :value="'/lesson/' + lesson.name"
-          />
+          >
+            <LinkItem
+              icon="book"
+              :title="lesson.name"
+              :value="'/lesson/' + lesson.name"
+            />
+          </NuxtLink>
           <mu-divider />
         </slot>
         <LinkItem to="/settings" icon="settings" title="设置" value="/settings" />

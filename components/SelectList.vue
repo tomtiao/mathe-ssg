@@ -10,11 +10,15 @@
           v-for="seg in chapter.children"
           :key="seg.id"
           slot="nested"
-          :to="`/page/${tk}/${seg.id}/1`"
           button
           :ripple="false"
         >
-          <mu-list-item-title>{{ seg.text }}</mu-list-item-title>
+          <NuxtLink
+            :to="`/page/${tk}/${seg.id}/1`"
+            style="color: inherit;"
+          >
+            <mu-list-item-title>{{ seg.text }}</mu-list-item-title>
+          </NuxtLink>
         </mu-list-item>
       </mu-list-item>
     </mu-list>
@@ -42,8 +46,6 @@ export default {
           return lesson.data
         }
       }
-      // eslint-disable-next-line
-      console.warn(`can not find lesson named '${name}'`);
       return []
     },
     tk () {
