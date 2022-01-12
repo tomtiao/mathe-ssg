@@ -1,3 +1,6 @@
+import axios from 'axios'
+import store from './store.js'
+
 export default {
   // Target: https://go.nuxtjs.dev/config-target
   target: 'static',
@@ -23,8 +26,8 @@ export default {
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
-    '~/plugins/muse-ui.js',
-    '~/plugins/muse-ui-progress.js'
+    '@/plugins/muse-ui.js',
+    '@/plugins/muse-ui-progress.js'
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
@@ -39,7 +42,8 @@ export default {
   // Modules: https://go.nuxtjs.dev/config-modules
   modules: [
     // https://go.nuxtjs.dev/pwa
-    '@nuxtjs/pwa'
+    '@nuxtjs/pwa',
+    '@nuxtjs/axios'
   ],
 
   // PWA module configuration: https://go.nuxtjs.dev/pwa
@@ -51,5 +55,87 @@ export default {
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {
+  },
+
+  // Hooks
+  hooks: {
+    generate: {
+      async route ({ route }) {
+        // const { tk, tid, page } = route.params
+        await axios.post(`${store.API_LOCAL_BASE_URL}debug`, `generate start: ${JSON.stringify(route)}`)
+      },
+      async routeCreated ({ route, errors }) {
+        // const { tk, tid, page } = route.params
+        await axios.post(`${store.API_LOCAL_BASE_URL}debug`, `generate end: ${JSON.stringify(route)}. errors: ${JSON.stringify(errors)}`)
+      }
+    }
+  },
+
+  // Generate configuration: https://nuxtjs.org/docs/configuration-glossary/configuration-generate
+  generate: {
+    async routes () {
+      const classes = (await store._fetchTrees()).trees
+
+      const sections = classes.map(({ name: className, data: chapters }) =>
+        chapters.map(({ children: section }) =>
+          section
+            .map(({ id: tid, count }) => ({ className, tid, count }))
+        )
+      ).flat(2)
+
+      const tkMap = {
+        高等数学: 'gs',
+        概率统计: 'gl',
+        复变函数: 'fb',
+        线性代数: 'xd'
+      }
+
+      const requests = sections.map(({ className, tid }) =>
+        axios.get(`${store.API_LOCAL_BASE_URL}api/qlist`, {
+          params: { tk: tkMap[className], tid }
+        }).then(resp => resp.data)
+      )
+
+      const qlistData = (await Promise.all(requests)).map(resp => resp.data)
+
+      const pagesRoutes = []
+      {
+        const zip = function* (a, b) {
+          for (let i = 0; i < a.length; i++) {
+            yield [a[i], b[i]]
+          }
+        }
+        const range = function* ({ start = 0, end }) { while (start < end) { yield start++ } }
+
+        const ITEM_PER_PAGE = 5
+
+        // await axios.post(`${store.API_LOCAL_BASE_URL}debug`, { qlist: qlistData, sections })
+
+        for (const [{ className, tid }, { list, total, length }] of zip(sections, qlistData)) {
+        // for (const [a, b] of zip(sections, qlistData)) {
+          // await axios.post(`${store.API_LOCAL_BASE_URL}debug`, { a, list: b?.list, exists: b?.list != null })
+          const t = []
+          const totalPage = Math.ceil(total / ITEM_PER_PAGE)
+          if (total < 1) {
+            t.push({
+              route: `/page/${className}/${tid}/1`,
+              payload: { total, list, length }
+            })
+          } else {
+            for (const i of range({ start: 1, end: totalPage + 1 })) {
+              t.push({
+                route: `/page/${className}/${tid}/${i}`,
+                payload: { total, list, length }
+              })
+            }
+          }
+          pagesRoutes.push(...t)
+        }
+      }
+
+      // await axios.post(`${store.API_LOCAL_BASE_URL}debug`, { data: pagesRoutes })
+
+      return pagesRoutes
+    }
   }
 }

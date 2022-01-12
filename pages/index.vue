@@ -53,9 +53,7 @@
 
 <script>
 // @ is an alias to /src
-import axios from 'axios'
 import Bar from '@/components/Bar.vue'
-import store from '@/store.js'
 
 export default {
   name: 'HomePage',
@@ -64,13 +62,17 @@ export default {
   },
   data () {
     return {
-      update: 0,
       star: 0
     }
   },
+  computed: {
+    update () {
+      return this.$store.state.update
+    }
+  },
   created () {
-    axios
-      .get(`${store.API_BASE_URL}api/star`)
+    this.$axios
+      .get(`${this.$store.state.API_BASE_URL}api/star`)
       .then((resp) => {
         const d = resp.data
         if (d.code === 0) {
@@ -80,14 +82,13 @@ export default {
         }
       })
       // eslint-disable-next-line
-      .catch(e => console.warn("get star:", e));
-    store.data.update.then(t => (this.update = t))
+      .catch(e => console.warn("get star:", e))
   },
   methods: {
     postStar () {
-      axios({
+      this.$axios({
         method: 'post',
-        url: `${store.API_BASE_URL}api/star`,
+        url: `${this.$store.state.API_BASE_URL}api/star`,
         data: '_=' + Date.now()
       })
         .then((resp) => {

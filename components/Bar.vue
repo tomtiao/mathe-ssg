@@ -14,17 +14,14 @@
         <slot>
           <LinkItem to="/" icon="home" title="主页" value="/" />
           <mu-divider />
-          <NuxtLink
+          <LinkItem
             v-for="lesson in trees"
             :key="lesson.name"
             :to="'/lesson/' + lesson.name"
-          >
-            <LinkItem
-              icon="book"
-              :title="lesson.name"
-              :value="'/lesson/' + lesson.name"
-            />
-          </NuxtLink>
+            icon="book"
+            :title="lesson.name"
+            :value="'/lesson/' + lesson.name"
+          />
           <mu-divider />
         </slot>
         <LinkItem to="/settings" icon="settings" title="设置" value="/settings" />
@@ -35,7 +32,6 @@
 </template>
 
 <script>
-import store from '@/store.js'
 import LinkItem from '@/components/LinkItem.vue'
 
 function url2Name (route) {
@@ -44,36 +40,6 @@ function url2Name (route) {
   } else {
     return route.path
   }
-}
-
-async function url2title (route) {
-  const base = '扶朕起来朕还能学'
-  let l = []
-  switch (route.name) {
-    case 'index':
-      l = ['主页', base]
-      break
-    case 'page-tk-tid-page':
-      l = [
-        await store.getSegName(route.params.tk, route.params.tid),
-        route.params.tk,
-        base
-      ]
-      break
-    case 'lesson':
-      l = [route.params.lessonName, base]
-      break
-    case 'settings':
-      l = ['设置', base]
-      break
-    case 'about':
-      l = ['关于', base]
-      break
-
-    default:
-      break
-  }
-  return l.join(' - ')
 }
 
 let lastScrollPosition = 0
@@ -88,8 +54,12 @@ export default {
       title: '扶朕起来朕还能学',
       showBar: true,
       open: false,
-      activeItem: '/',
-      trees: []
+      activeItem: '/'
+    }
+  },
+  computed: {
+    trees () {
+      return this.$store.state.trees
     }
   },
   watch: {
@@ -101,9 +71,6 @@ export default {
   beforeMount () {
     window.addEventListener('scroll', this.handleScroll)
     this.onRouteChange(this.$route)
-  },
-  created () {
-    store.data.trees.then(t => (this.trees = t))
   },
   beforeDestroy () {
     window.removeEventListener('scroll', this.handleScroll)
@@ -124,10 +91,9 @@ export default {
       lastScrollPosition = p
     },
     onRouteChange (route) {
-      url2title(route).then((r) => {
-        this.title = r
-        document.title = r
-      })
+      const r = this.$store.getters.url2title(route)
+      this.title = r
+      document.title = r
       this.activeItem = url2Name(route)
     }
   }

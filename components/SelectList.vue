@@ -11,14 +11,14 @@
           :key="seg.id"
           slot="nested"
           button
+          :to="`/page/${tk}/${seg.id}/1`"
           :ripple="false"
         >
-          <NuxtLink
-            :to="`/page/${tk}/${seg.id}/1`"
-            style="color: inherit;"
+          <mu-list-item-title
+            style="display: block;"
           >
-            <mu-list-item-title>{{ seg.text }}</mu-list-item-title>
-          </NuxtLink>
+            {{ seg.text }}
+          </mu-list-item-title>
         </mu-list-item>
       </mu-list-item>
     </mu-list>
@@ -26,16 +26,12 @@
 </template>
 
 <script>
-import store from '@/store.js'
-
 export default {
   name: 'SelectList',
-  data () {
-    return {
-      trees: []
-    }
-  },
   computed: {
+    trees () {
+      return this.$store.state.trees
+    },
     list () {
       const name = this.$route.params.lessonName
       if (this.trees.length === 0) {
@@ -51,9 +47,6 @@ export default {
     tk () {
       return this.$route.params.lessonName
     }
-  },
-  created () {
-    store.data.trees.then(t => (this.trees = t))
   }
 }
 </script>
