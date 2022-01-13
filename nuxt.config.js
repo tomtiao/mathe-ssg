@@ -109,11 +109,7 @@ export default {
 
         const ITEM_PER_PAGE = 5
 
-        // await axios.post(`${store.API_LOCAL_BASE_URL}debug`, { qlist: qlistData, sections })
-
         for (const [{ className, tid }, { list, total, length }] of zip(sections, qlistData)) {
-        // for (const [a, b] of zip(sections, qlistData)) {
-          // await axios.post(`${store.API_LOCAL_BASE_URL}debug`, { a, list: b?.list, exists: b?.list != null })
           const t = []
           const totalPage = Math.ceil(total / ITEM_PER_PAGE)
           if (total < 1) {
@@ -133,9 +129,8 @@ export default {
         }
       }
 
-      // await axios.post(`${store.API_LOCAL_BASE_URL}debug`, { data: pagesRoutes })
-
       return pagesRoutes
-    }
+    },
+    interval: 100
   }
 }

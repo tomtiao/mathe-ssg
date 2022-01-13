@@ -52,7 +52,44 @@ export default {
     }
   },
   async fetch () {
-    await this.getQuestion()
+    this.imgs.length = 0
+    const imgs = []
+    try {
+      const resp = await this.$axios.get(`${this.$store.state.API_LOCAL_BASE_URL}api/question`, {
+        params: { name: this.name }
+      })
+
+      const d = resp.data
+      if (d.code === 0) {
+        for (const k of ['tk', 'diff']) {
+          this[k] = d.data[k]
+        }
+        {
+          const concatBase64 = base64 => `data:image/png;base64,${base64}`
+          const range = function* ({ start = 0, end }) { while (start < end) { yield start++ } }
+          for (const i of range({ end: 6 })) {
+            imgs.push({
+              src: concatBase64(d.data[`img${i}`]),
+              isAnswer: 0
+            })
+          }
+        }
+        imgs[0].isAnswer = -1
+        imgs[5].isAnswer = -1
+        // set question answer
+        imgs[d.data.answer].isAnswer = 1
+        // shuffle options
+        imgs.splice(1, 4, ...utils.shuffle(imgs.slice(1, 5)))
+        this.imgs = imgs
+      } else {
+        throw new Error(d.msg)
+      }
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.warn('question:', error)
+    } finally {
+      this.$emit('fetch-over')
+    }
   },
   computed: {
     diffColor () {
@@ -63,15 +100,11 @@ export default {
       }[this.diff]
     }
   },
-  // watch: {
-  //   name () {
-  //     this.$fetch()
-  //     this.initOptions()
-  //   }
-  // },
-  // created () {
-  //   this.$fetch()
-  // },
+  watch: {
+    name () {
+      this.initOptions()
+    }
+  },
   beforeMount () {
     this.initOptions()
   },
@@ -90,46 +123,6 @@ export default {
     },
     toggleAnswer () {
       this.options.showAnswer = !this.options.showAnswer
-    },
-    async getQuestion () {
-      this.imgs = []
-      const imgs = []
-      try {
-        const resp = await this.$axios.get(`${this.$store.state.API_LOCAL_BASE_URL}api/question`, {
-          params: { name: this.name }
-        })
-
-        const d = resp.data
-        if (d.code === 0) {
-          for (const k of ['tk', 'diff']) {
-            this[k] = d.data[k]
-          }
-          {
-            const concatBase64 = base64 => `data:image/png;base64,${base64}`
-            const range = function* ({ start = 0, end }) { while (start < end) { yield start++ } }
-            for (const i of range({ end: 6 })) {
-              imgs.push({
-                src: concatBase64(d.data[`img${i}`]),
-                isAnswer: 0
-              })
-            }
-          }
-          imgs[0].isAnswer = -1
-          imgs[5].isAnswer = -1
-          // set question answer
-          imgs[d.data.answer].isAnswer = 1
-          // shuffle options
-          imgs.splice(1, 4, ...utils.shuffle(imgs.slice(1, 5)))
-          this.imgs = imgs
-        } else {
-          throw new Error(d.msg)
-        }
-      } catch (error) {
-        // eslint-disable-next-line no-console
-        console.warn('question:', error)
-      } finally {
-        this.$emit('fetch-over')
-      }
     }
   }
 }

@@ -33,23 +33,14 @@
     <div class="app-container">
       <Question
         v-for="(tid, key) in list"
-        :key="key"
+        :key="tid"
         class="question"
         :name="tid"
         :no="(current - 1) * 5 + key + 1"
         @fetch-over="onFetchOver"
       />
       <mu-flex direction="column" justify-content="center" align-items="center">
-        <!-- <mu-pagination :page-size="5" :total="total" :current="current" @update:current="onChangePage" /> -->
-        <div class="links">
-          <NuxtLink
-            v-for="i of new Array(Math.floor(total / 5)).keys()"
-            :key="`/page/${$route.params.tk}/${$route.params.tid}/${i+1}`"
-            :to="`/page/${$route.params.tk}/${$route.params.tid}/${i+1}`"
-          >
-            {{ i+1 }}
-          </NuxtLink>
-        </div>
+        <mu-pagination :page-size="5" :total="total" :current="current" @update:current="onChangePage" />
         <mu-flex direction="row" justify-content="center">
           <NuxtLink
             v-if="preNext[0]"
@@ -90,51 +81,21 @@ import LinkItem from '@/components/LinkItem.vue'
 
 export default {
   name: 'QuestionPage',
+  key (route) {
+    return route.fullPath
+  },
   components: {
     Bar,
     Question,
     LinkItem
   },
-  // beforeRouteUpdate (to, from, next) {
-  //   const { tk, tid, page } = to.params
-  //   console.error(to.params)
-  //   const current = isNaN(parseInt(page)) ? 1 : parseInt(page)
-
-  //   this.$store.dispatch('qlist', { tk, tid, page: current })
-  //     .then((data) => {
-  //       console.error(to.params)
-  //       for (const key of Object.keys(data)) {
-  //         this[key] = data[key]
-  //       }
-  //       next()
-  //     })
-  //     // eslint-disable-next-line no-console
-  //     .catch(err => console.error(`beforeRouteUpdate: ${err}`))
-  // },
-  async asyncData ({ store, payload, params, error }) {
+  async asyncData ({ payload }) {
     if (payload) {
-      return {
+      return await {
         total: payload.total,
         list: payload.list,
         len: payload.length
       }
-    }
-
-    const { tk, tid, page } = params
-
-    const current = isNaN(parseInt(page)) ? 1 : parseInt(page)
-
-    let data = {}
-    try {
-      const resp = await store.dispatch('qlist', { tk, tid, page: current })
-
-      data = resp
-    } catch (err) {
-      error(err)
-    }
-
-    return {
-      ...data
     }
   },
   data () {
@@ -146,6 +107,29 @@ export default {
       list: [],
       current: 1,
       fetchCount: 0
+    }
+  },
+  async fetch () {
+    this.$progress.start()
+
+    const { tk, tid, page } = this.$route.params
+
+    const current = isNaN(parseInt(page)) ? 1 : parseInt(page)
+
+    this.current = current
+
+    let data = {}
+    try {
+      const resp = await this.$store.dispatch('qlist', { tk, tid, page: current })
+
+      data = resp
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.error(err)
+    }
+
+    for (const key of Object.keys(data)) {
+      this[key] = data[key]
     }
   },
   computed: {
@@ -163,17 +147,6 @@ export default {
       return this.$store.getters.getSiblingSegs(tk, tid)
     }
   },
-  // created () {
-  //   const { tk, tid, page } = this.$route.params
-  //   const current = isNaN(parseInt(page)) ? 1 : parseInt(page)
-  //   this.current = current
-  //   this.$store.dispatch('qlist', { tk, tid, page: current })
-  //     .then((data) => {
-  //       for (const key of Object.keys(data)) {
-  //         this[key] = data[key]
-  //       }
-  //     })
-  // },
   methods: {
     onChangePage (page) {
       const params = this.$route.params
@@ -185,10 +158,6 @@ export default {
       if (this.fetchCount === this.len) {
         this.$progress.done()
       }
-    },
-    async fetchData () {
-      await this.fetchQuestions()
-      this.fetchCount = 0
     }
   }
 }

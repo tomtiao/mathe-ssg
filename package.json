@@ -18,7 +18,7 @@
     "core-js": "^3.19.3",
     "muse-ui": "^3.0.2",
     "muse-ui-progress": "^0.1.0",
-    "nuxt": "^2.15.8",
+    "nuxt-edge": "^2.16.0-27358576.777a4b7f",
     "swiper": "6",
     "vue": "^2.6.14",
     "vue-server-renderer": "^2.6.14",

@@ -36,7 +36,6 @@ export default {
   width: 100%;
   height: 100vh;
   background: url(./assets/miku_back.jpg) no-repeat center;
-  /* background-size: cover; */
   filter: grayscale(1) opacity(0.2);
 }
 

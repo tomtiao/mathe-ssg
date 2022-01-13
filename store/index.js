@@ -4,6 +4,12 @@ const API_LOCAL_BASE_URL = 'http://localhost:2333/'
 export const state = () => ({
   API_BASE_URL,
   API_LOCAL_BASE_URL,
+  tkMap: {
+    高等数学: 'gs',
+    概率统计: 'gl',
+    复变函数: 'fb',
+    线性代数: 'xd'
+  },
   trees: [],
   update: 0
 })
@@ -65,14 +71,16 @@ export const getters = {
       case 'index':
         l = ['主页', base]
         break
-      case 'page-tk-tid-page':
+      case 'page-tk-tid-page': {
+        const { tk, tid } = route.params
         l = [
-          getters.getSegName(route.params.tk, route.params.tid),
-          route.params.tk,
+          getters.getSegName(tk, tid),
+          tk,
           base
         ]
         break
-      case 'lesson':
+      }
+      case 'lesson-lessonName':
         l = [route.params.lessonName, base]
         break
       case 'settings':
@@ -122,19 +130,12 @@ export const actions = {
     // eslint-disable-next-line
         .catch(e => console.warn(e));
   },
-  async qlist ({ state }, { tk, tid, page }) {
-    const tkMap = {
-      高等数学: 'gs',
-      概率统计: 'gl',
-      复变函数: 'fb',
-      线性代数: 'xd'
-    }
-
+  async qlist ({ state }, { tk: className, tid, page }) {
     let result = {}
     try {
       const resp = await this.$axios
         .get(`${state.API_LOCAL_BASE_URL}api/qlist`, {
-          params: { tk: tkMap[tk], tid, page, per: 5 }
+          params: { tk: state.tkMap[className], tid, page, per: 5 }
         })
 
       const d = resp.data
