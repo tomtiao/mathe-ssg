@@ -149,7 +149,7 @@ export default {
   },
   methods: {
     onChangePage (page) {
-      const params = this.$route.params
+      const params = { ...this.$route.params }
       params.page = page
       this.$router.push({ name: 'page-tk-tid-page', params })
     },
