@@ -1,3 +1,5 @@
+import fs from 'fs/promises'
+
 import axios from 'axios'
 import store from './store.js'
 
@@ -57,24 +59,23 @@ export default {
   build: {
   },
 
-  // Hooks
-  hooks: {
-    generate: {
-      async route ({ route }) {
-        // const { tk, tid, page } = route.params
-        await axios.post(`${store.API_LOCAL_BASE_URL}debug`, `generate start: ${JSON.stringify(route)}`)
-      },
-      async routeCreated ({ route, errors }) {
-        // const { tk, tid, page } = route.params
-        await axios.post(`${store.API_LOCAL_BASE_URL}debug`, `generate end: ${JSON.stringify(route)}. errors: ${JSON.stringify(errors)}`)
-      }
-    }
-  },
-
   // Generate configuration: https://nuxtjs.org/docs/configuration-glossary/configuration-generate
   generate: {
     async routes () {
-      const classes = (await store._fetchTrees()).trees
+      let classes
+      try {
+        if ((await fs.stat('./trees.json')).isFile()) {
+          classes = JSON.parse(await fs.readFile('./trees.json'))
+        } else {
+          throw new TypeError('trees.json not a file.')
+        }
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.warn(error)
+        classes = (await store._fetchTrees()).trees
+
+        await fs.writeFile('trees.json', JSON.stringify(classes))
+      }
 
       const sections = classes.map(({ name: className, data: chapters }) =>
         chapters.map(({ children: section }) =>
@@ -131,6 +132,7 @@ export default {
 
       return pagesRoutes
     },
-    interval: 100
+    interval: 100,
+    subFolders: false
   }
 }
