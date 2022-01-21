@@ -28,9 +28,24 @@
 </template>
 
 <script>
-import utils from '@/utils.js'
 import DraggableImg from '@/components/DraggableImg.vue'
 import Crash from '@/components/Crash.vue'
+
+// ref: https://stackoverflow.com/questions/6274339/how-can-i-shuffle-an-array
+/**
+ * Shuffles array in place.
+ * @param {Array} a items An array containing the items.
+ */
+function shuffle (a) {
+  let j, x, i
+  for (i = a.length - 1; i > 0; i--) {
+    j = Math.floor(Math.random() * (i + 1))
+    x = a[i]
+    a[i] = a[j]
+    a[j] = x
+  }
+  return a
+}
 
 export default {
   name: 'QuestionComponent',
@@ -79,7 +94,7 @@ export default {
         // set question answer
         imgs[d.data.answer].isAnswer = 1
         // shuffle options
-        imgs.splice(1, 4, ...utils.shuffle(imgs.slice(1, 5)))
+        imgs.splice(1, 4, ...shuffle(imgs.slice(1, 5)))
         this.imgs = imgs
       } else {
         throw new Error(d.msg)
