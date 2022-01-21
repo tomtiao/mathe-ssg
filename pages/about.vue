@@ -30,6 +30,10 @@
           </li>
         </ul>
         <p>
+          Going Full Static, by
+          <a href="https://github.com/tomtiao">tomtiao</a> using <a href="https://nuxtjs.org/">Nuxt.js</a>.
+        </p>
+        <p>
           背景图片：
           <a href="https://www.pixiv.net/member_illust.php?mode=medium&illust_id=66394619">
             <i>Twinkle Bell</i>
