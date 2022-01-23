@@ -57,6 +57,16 @@ export default {
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {
+    babel: {
+      plugins: [
+        ['import', {
+          libraryName: 'muse-ui',
+          libraryDirectory: 'lib',
+          camel2DashComponentName: false
+        }]
+      ]
+    },
+    transpile: ['muse-ui']
   },
 
   // Generate configuration: https://nuxtjs.org/docs/configuration-glossary/configuration-generate

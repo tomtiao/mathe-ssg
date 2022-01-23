@@ -16,8 +16,6 @@
     "@nuxtjs/pwa": "^3.3.5",
     "axios": "^0.24.0",
     "core-js": "^3.19.3",
-    "muse-ui": "^3.0.2",
-    "muse-ui-progress": "^0.1.0",
     "nuxt-edge": "^2.16.0-27358576.777a4b7f",
     "swiper": "6",
     "vue": "^2.6.14",
@@ -29,8 +27,13 @@
     "@babel/eslint-parser": "^7.16.3",
     "@nuxtjs/eslint-config": "^8.0.0",
     "@nuxtjs/eslint-module": "^3.0.2",
+    "babel-plugin-import": "^1.13.3",
     "eslint": "^8.4.1",
     "eslint-plugin-nuxt": "^3.1.0",
-    "eslint-plugin-vue": "^8.2.0"
+    "eslint-plugin-vue": "^8.2.0",
+    "less": "^4.1.2",
+    "less-loader": "7",
+    "muse-ui": "^3.0.2",
+    "muse-ui-progress": "^0.1.0"
   }
 }
