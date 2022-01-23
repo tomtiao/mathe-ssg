@@ -1,0 +1,1 @@
+__NUXT_JSONP__("/lesson/高等数学", {data:[{}],fetch:{},mutations:[]});

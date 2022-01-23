@@ -1,0 +1,1 @@
+__NUXT_JSONP__("/lesson/线性代数", {data:[{}],fetch:{},mutations:[]});

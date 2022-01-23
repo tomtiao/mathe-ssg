@@ -1,0 +1,1 @@
+__NUXT_JSONP__("/page/高等数学/8744d2c11463492cbb16b27e2472edb9/1", (function(a){return {data:[{total:a,list:[],len:a}],fetch:{"data-v-ab6a31d0:0":{total:a,len:a,list:[],current:1,fetchCount:a}},mutations:[]}}(0)));

@@ -1,0 +1,1 @@
+__NUXT_JSONP__("/lesson/概率统计", {data:[{}],fetch:{},mutations:[]});
