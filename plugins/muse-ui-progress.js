@@ -2,4 +2,4 @@ import Vue from 'vue'
 import NProgress from 'muse-ui-progress'
 import 'muse-ui-progress/dist/muse-ui-progress.css'
 
-Vue.use(NProgress)
+Vue.use(NProgress, { size: 3, color: 'orange' })
