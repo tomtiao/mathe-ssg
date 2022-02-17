@@ -1,4 +1,6 @@
-# matheSsg
+# mathe-ssg
+
+mathe-ssg is the SSG version of [mathe-front](https://github.com/eleflea/mathe-front).
 
 ## Build Setup
 
