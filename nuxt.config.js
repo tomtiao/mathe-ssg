@@ -18,7 +18,7 @@ export default {
     ],
     link: [
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
-      { rel: 'stylesheet', href: 'https://cdn.bootcss.com/material-design-icons/3.0.1/iconfont/material-icons.css' }
+      { rel: 'stylesheet', href: 'https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-y/material-design-icons/3.0.1/iconfont/material-icons.min.css' }
     ]
   },
 
